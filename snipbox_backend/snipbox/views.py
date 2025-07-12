@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Snippet, Tag
 from .serializers import SnippetSerializer, TagSerializer
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 
 class SnippetCreateView(generics.CreateAPIView):
@@ -55,3 +56,34 @@ class TagListView(generics.ListAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = [IsAuthenticated]
+
+
+class TagDetailView(generics.ListAPIView):
+    serializer_class = SnippetSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        tag_id = self.kwargs['pk']
+        return Snippet.objects.filter(user=self.request.user, tag_id=tag_id)
+    
+
+class SnippetOverviewView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        snippets = Snippet.objects.filter(user=request.user)
+        total = snippets.count()
+        data = {
+            'total_snippets': total,
+            'snippets': [
+                {
+                    'id': snippet.id,
+                    'title': snippet.title,
+                    'detail_url': request.build_absolute_uri(
+                        reverse('snippet-detail', args=[snippet.id])
+                    )
+                }
+                for snippet in snippets
+            ]
+        }
+        return Response(data)
