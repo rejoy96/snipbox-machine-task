@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .models import Snippet
+from .serializers import SnippetSerializer
 
-# Create your views here.
+
+class SnippetCreateView(generics.CreateAPIView):
+    serializer_class = SnippetSerializer
+    permission_classes = [IsAuthenticated]
