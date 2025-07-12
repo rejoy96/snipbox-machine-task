@@ -2,6 +2,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import Snippet, Tag
 from .serializers import SnippetSerializer
+from rest_framework.response import Response
 
 
 class SnippetCreateView(generics.CreateAPIView):
@@ -31,3 +32,20 @@ class SnippetUpdateView(generics.UpdateAPIView):
             serializer.save(tag=tag)
         else:
             serializer.save()
+
+
+class SnippetDeleteView(generics.DestroyAPIView):
+    serializer_class = SnippetSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Snippet.objects.filter(user=self.request.user)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        snippets = Snippet.objects.filter(user=request.user)
+        serializer = SnippetSerializer(snippets, many=True)
+        return Response(serializer.data)
