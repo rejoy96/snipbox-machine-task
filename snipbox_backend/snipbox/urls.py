@@ -1,7 +1,7 @@
 
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import SnippetCreateView, SnippetDetailView, SnippetUpdateView, SnippetDeleteView
+from .views import SnippetCreateView, SnippetDetailView, SnippetUpdateView, SnippetDeleteView, TagListView
 
 urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -12,6 +12,7 @@ urlpatterns = [
          SnippetUpdateView.as_view(), name='snippet-update'),
     path('snippets/<int:pk>/delete/',
          SnippetDeleteView.as_view(), name='snippet-delete'),
+    path('tags/', TagListView.as_view(), name='tag-list'),
 
     
 ]

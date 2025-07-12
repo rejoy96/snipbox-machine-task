@@ -13,3 +13,9 @@ class SnippetSerializer(serializers.ModelSerializer):
         tag_title = validated_data.pop('tag')
         tag, _ = Tag.objects.get_or_create(title=tag_title)
         return Snippet.objects.create(user=self.context['request'].user, tag=tag, **validated_data)
+    
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ['id', 'title']

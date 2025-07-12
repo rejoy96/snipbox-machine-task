@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import Snippet, Tag
-from .serializers import SnippetSerializer
+from .serializers import SnippetSerializer, TagSerializer
 from rest_framework.response import Response
 
 
@@ -49,3 +49,9 @@ class SnippetDeleteView(generics.DestroyAPIView):
         snippets = Snippet.objects.filter(user=request.user)
         serializer = SnippetSerializer(snippets, many=True)
         return Response(serializer.data)
+
+
+class TagListView(generics.ListAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = [IsAuthenticated]
